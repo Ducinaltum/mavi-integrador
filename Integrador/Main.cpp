@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
-
+#pragma once
 int main() {
 	RenderWindow App(sf::VideoMode(800, 600, 32), "Integrador");
 	while (App.isOpen())
