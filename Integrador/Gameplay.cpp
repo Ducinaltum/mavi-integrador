@@ -18,14 +18,30 @@ private:
 
 
 public:
-	Gameplay();
-	void Update(RenderWindow rw) override;
+	Gameplay()
+	{
+		lives = 3;
+		kills = 0;
+
+		sCrosshair = new Sprite();
+		tCrosshair = new Texture();
+		tCrosshair->loadFromFile("assets/crosshair.png");
+		sCrosshair->setTexture(*tCrosshair);
+	}
+	void Update(RenderWindow* rw) override
+	{
+		Vector2i mousePos = Mouse::getPosition(*rw);
+		sCrosshair->setPosition(mousePos.x, mousePos.y);
+		lives++;
+	};
+
+	virtual void Draw(RenderWindow* rw)override
+	{
+		rw->draw(*sCrosshair);
+	}
+	virtual GameState* CheckState() override
+	{
+		return NULL;
+	}
 };
 
-Gameplay::Gameplay()
-{
-}
-
-void Gameplay::Update(RenderWindow rw)
-{
-}
