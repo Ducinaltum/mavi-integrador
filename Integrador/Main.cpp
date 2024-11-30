@@ -6,8 +6,9 @@
 using namespace sf;
 #pragma once
 int main() {
-	RenderWindow App(sf::VideoMode(800, 600, 32), "Integrador");
-	GameState * gameState = new MainMenu(&App);
+	RenderWindow App(sf::VideoMode(1000, 1000, 32), "Integrador");
+	//GameState * gameState = new MainMenu(&App);
+	GameState * gameState = new Gameplay(&App);
 	while (App.isOpen())
 	{
 		Event evt;
@@ -25,7 +26,7 @@ int main() {
 		gameState->Draw(&App);
 		App.display();
 
-		GameState * gs = gameState->CheckState();
+		GameState * gs = gameState->CheckState(&App);
 		if (gs != NULL)
 		{
 			delete gameState;

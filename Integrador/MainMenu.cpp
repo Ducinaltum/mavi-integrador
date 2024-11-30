@@ -60,12 +60,13 @@ public:
 		rw->draw(*exitButton->getSprite());
 	}
 
-	virtual GameState* CheckState() override
+	virtual GameState* CheckState(RenderWindow* rw) override
 	{
 		if (goToGame)
 		{
-			Gameplay* s = new Gameplay();
+			Gameplay* s = new Gameplay(rw);
 			return s;
 		}
+		return NULL;
 	}
 };
