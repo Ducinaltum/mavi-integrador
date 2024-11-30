@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Gameplay.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Main.cpp">

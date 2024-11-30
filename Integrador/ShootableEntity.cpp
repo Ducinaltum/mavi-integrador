@@ -1,7 +1,5 @@
-//////Bibliotecas//////
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-
 using namespace sf;
 #pragma once
 
@@ -11,16 +9,18 @@ private:
 	const float m_targetHeight = 64.0f;
 	Sprite * m_sprite;
 	Texture * m_texture;
-	bool m_isEnemy;
 	float m_elapsedTime;
 	float m_duration;
+	bool m_isEnemy;
 	bool m_isActive;
+	bool m_shouldHaunt;
 
 public:
 	ShootableEntity(std::string path, bool isEnemy, float initialDuration)
 	{
 		float sizeRatio = 0;
 		m_elapsedTime = 0;
+		m_shouldHaunt = false;
 		m_isEnemy = isEnemy;
 		m_duration = initialDuration;
 		m_isActive = false;
@@ -38,6 +38,10 @@ public:
 		m_elapsedTime += dt;
 		if (m_elapsedTime >= m_duration)
 		{
+			if (m_isEnemy)
+			{
+				m_shouldHaunt = true;
+			}
 			Deactivate();
 		}
 	}
@@ -53,15 +57,15 @@ public:
 
 	void Activate(Vector2f pos)
 	{
+		m_isActive = true;
 		m_sprite->setPosition(pos);
 		m_elapsedTime = 0;
-		m_isActive = true;
 	}
 
 	void Deactivate()
 	{
-		m_elapsedTime = 0;
 		m_isActive = false;
+		m_elapsedTime = 0;
 	}
 
 	bool IsActive()
@@ -72,5 +76,15 @@ public:
 	bool IsEnemy()
 	{
 		return m_isEnemy;
+	}
+
+	int ShouldHaunt()
+	{
+		if (m_shouldHaunt)
+		{
+			m_shouldHaunt = false;
+			return true;
+		}
+		return false;
 	}
 };

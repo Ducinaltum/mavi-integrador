@@ -1,55 +1,40 @@
-//////Bibliotecas//////
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-
 using namespace sf;
+#pragma once
+
 //Inspired in https://en.sfml-dev.org/forums/index.php?topic=5950.0
 class Button {
 private:
-    Sprite* normal;
-    Sprite* clicked;
-    Sprite* currentStateSprite;
-    Text* text;
-    bool current;
+    Sprite* m_sprite;
+    Text* m_text;
 
 public:
-    Button(sf::Texture* normalTexture, sf::Texture* clickedTexture, std::string words, sf::Vector2f location, sf::Vector2f * targetSize)
+    Button(sf::Texture* normalTexture, sf::Texture* clickedTexture, Font * font, std::string words, sf::Vector2f location, sf::Vector2f * targetSize)
     {
-        normal = new Sprite();
-        clicked = new Sprite();
-        text = new Text();
-        normal->setTexture(*normalTexture);
-        clicked->setTexture(*clickedTexture);
+        m_sprite = new Sprite();
+        m_text = new Text();
 
-        clicked->setScale(targetSize->x / normalTexture->getSize().x, targetSize->y / normalTexture->getSize().y);
-        normal->setScale(targetSize->x / clickedTexture->getSize().x, targetSize->y / clickedTexture->getSize().y);
+        m_text->setFont(*font);
+        m_text->setString(words);
+        m_text->setPosition(location.x + 16, location.y + 8);
+        m_text->setCharacterSize(46);
+        m_text->setFillColor(sf::Color::Black);
 
-        currentStateSprite = normal;
-        current = false;
-        normal->setPosition(location);
-        clicked->setPosition(location);
-        text->setString(words);
-        text->setPosition(location.x + 4, location.y + 4);
-        text->setCharacterSize(14);
-        text->setFillColor(sf::Color::Black);
+        m_sprite->setTexture(*normalTexture);
+        m_sprite->setScale(targetSize->x / clickedTexture->getSize().x, targetSize->y / clickedTexture->getSize().y);
+        m_sprite->setPosition(location);
     }
+
     bool checkClick(sf::Vector2f mousePos) {
-        return currentStateSprite->getGlobalBounds().contains(mousePos);
-    }
-    void setState(bool which) {
-        current = which;
-        if (current)
-        {
-            currentStateSprite = clicked;
-            return;
-        }
-        currentStateSprite = normal;
+        return m_sprite->getGlobalBounds().contains(mousePos);
     }
 
     Sprite* getSprite() {
-        return currentStateSprite;
+        return m_sprite;
     }
+
     Text* getText() {
-        return text;
+        return m_text;
     }
 };

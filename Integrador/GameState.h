@@ -9,6 +9,8 @@ class GameState
 public:
 	virtual void Update(RenderWindow*  rw) = 0;
 	virtual void Draw(RenderWindow* rw) = 0;
-	virtual GameState * CheckState(RenderWindow* rw) = 0;
+	virtual bool CheckState() = 0;
+
 
 };
+
