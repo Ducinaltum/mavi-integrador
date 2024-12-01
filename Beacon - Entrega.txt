@@ -7,10 +7,13 @@ Fuentes:
 Imágenes:
 Croshair y botones: Material de cátedra
 Personajes: Juegos de scratch sprunki
-Mansión: Leonardo.ai
+Mansión y ghoul: Leonardo.ai
 
 Código:
 Me basé en este botón para hacer el mío:
 https://en.sfml-dev.org/forums/index.php?topic=5950.0
 
-Le pedí una mano a chat gpt para hacer un casteo dinámico de padre a hijo en main, ya que tenía referencias circulares entre MainMenu, Gameplay y GameOver e iba a ser un bardo crear los archivos h. No la ví hasta que era muy tarde. Refactoricé para terminar utilizando la enumeración que se ve en Main.
+Le pedí una mano a chat gpt para hacer un casteo dinámico de padre a hijo en main, ya que tenía referencias circulares entre MainMenu, Gameplay y GameOver (Cada estado creaba al objeto controlador del siguiente) e iba a ser un bardo crear los archivos h. No la ví hasta que era muy tarde. Refactoricé para terminar utilizando la enumeración que se ve en Main.
+Aprendí de la mala manera a no despreciar los archivos .h aunque sean insoportablemente incómodos para navegar por el código.
+
+Me pasó que al usar breakpoints el proyecto no me compilaba una versión actualizada al hacer cambios. La primera vez que ma pasó tenía que forzar una recompilación manual cada vez que quería ejecutar con cambios actualizados. Los foros no me ofrecieron una solución. Docente, ¿alguna idea sobre que puede estar causando esa situación?
