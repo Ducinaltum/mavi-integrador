@@ -14,8 +14,9 @@ enum class EState
 	GameOver
 };
 
-int main() {
-
+int main() 
+{
+	srand(time(NULL));
 	EState state = EState::MainMenu;
 	sf::Font font;
 	font.loadFromFile("assets/Allan-Bold.ttf");

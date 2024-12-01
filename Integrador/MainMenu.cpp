@@ -51,10 +51,12 @@ public:
 		m_title.setPosition((rw->getSize().x / 2) - (m_title.getGlobalBounds().width / 2) , 64);		
 
 		m_instructions.setFont(*mainFont);
-		m_instructions.setString("Kill the ghouls, \nbut not the house human inhabitants\nPrepare your spirit\nyou can only endure\nthree times to see the death face to face");
+		m_instructions.setString("Kill the ghouls, \nbut not the house human inhabitants\nPrepare your spirit\nyou can only endure\nthree times to see the death face to face\n(left click over an entity to shoot)");
 		m_instructions.setCharacterSize(64);
 		m_instructions.setFillColor(sf::Color::Red);
-		m_instructions.setPosition((rw->getSize().x / 2) - (m_instructions.getGlobalBounds().width / 2), 512);		
+		m_instructions.setOutlineColor(sf::Color(0, 0, 0, 225));
+		m_instructions.setOutlineThickness(5);
+		m_instructions.setPosition((rw->getSize().x / 2) - (m_instructions.getGlobalBounds().width / 2), 512-64);		
 	}
 
 	void Update(RenderWindow* rw) override

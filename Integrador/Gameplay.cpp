@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "GameState.h"
 #include "ShootableEntity.cpp"
+#include "Haunter.cpp"
+#include "NightimeClock.cpp"
 #pragma once
 
 class Gameplay : public GameState
@@ -26,6 +28,9 @@ private:
 	Texture* m_crosshairTex;
 	Vector2f* m_crosshairOffset;
 
+	Haunter* m_haunter;
+	//NightimeClock* m_nightimeClock;
+
 	ShootableEntity* m_shootableEntities[12];
 	Vector2f* m_spawnSpots[6];
 	int* m_usedSpots[6];
@@ -48,6 +53,8 @@ public:
 		m_ghoulsCounter->setCharacterSize(42);
 		m_ghoulsCounter->setFillColor(sf::Color::Red);
 		m_ghoulsCounter->setPosition(rw->getSize().x - m_ghoulsCounter->getGlobalBounds().width - 32, 32);
+		m_ghoulsCounter->setOutlineColor(sf::Color(255, 255, 255, 100));
+		m_ghoulsCounter->setOutlineThickness(1);
 
 		m_spiritCounter = new Text();
 		m_spiritCounter->setFont(*m_mainFont);
@@ -55,6 +62,8 @@ public:
 		m_spiritCounter->setCharacterSize(42);
 		m_spiritCounter->setFillColor(sf::Color::Cyan);
 		m_spiritCounter->setPosition(32, 32);
+		m_spiritCounter->setOutlineColor(sf::Color(255, 255, 255, 100));
+		m_spiritCounter->setOutlineThickness(1);
 
 		m_crosshair = new Sprite();
 		m_crosshairTex = new Texture();
@@ -67,7 +76,10 @@ public:
 		m_crosshairTex->loadFromFile("assets/crosshair.png");
 		m_crosshair->setTexture(*m_crosshairTex);
 
-		float crosshairRatio = m_crosshairTargetSize / (float) m_crosshairTex->getSize().x;
+		m_haunter = new Haunter();
+		//m_nightimeClock = new NightimeClock();
+
+		float crosshairRatio = m_crosshairTargetSize / (float)m_crosshairTex->getSize().x;
 		m_crosshair->setScale(crosshairRatio, crosshairRatio);
 
 		m_backgroundTex->loadFromFile("assets/mansion.jpg");
@@ -104,54 +116,60 @@ public:
 	{
 		float deltaTime = m_clock.getElapsedTime().asSeconds();
 		m_clock.restart();
-		Vector2i mousePos = Mouse::getPosition(*rw);
-		Vector2f fMousePos((float)mousePos.x, (float)mousePos.y);
-		m_crosshair->setPosition(mousePos.x - m_crosshairOffset->x, mousePos.y - m_crosshairOffset->y);
-		for (int i = 0; i < 12; i++)
+		if (m_lives > 0)
 		{
-			if (m_shootableEntities[i]->IsActive())
+			Vector2i mousePos = Mouse::getPosition(*rw);
+			Vector2f fMousePos((float)mousePos.x, (float)mousePos.y);
+			m_crosshair->setPosition(mousePos.x - m_crosshairOffset->x, mousePos.y - m_crosshairOffset->y);
+			for (int i = 0; i < 12; i++)
 			{
-				m_shootableEntities[i]->Update(deltaTime, rw);
-				if (Mouse::isButtonPressed(Mouse::Button::Left))
+				if (m_shootableEntities[i]->IsActive())
 				{
-					if (m_shootableEntities[i]->CheckShoot(fMousePos))
+					m_shootableEntities[i]->Update(deltaTime, rw);
+					if (Mouse::isButtonPressed(Mouse::Button::Left))
 					{
-						if (m_shootableEntities[i]->IsEnemy())
+						if (m_shootableEntities[i]->CheckShoot(fMousePos))
 						{
-							m_kills++;
+							if (m_shootableEntities[i]->IsEnemy())
+							{
+								m_kills++;
+							}
+							else
+							{
+								m_lives--;
+							}
+							m_shootableEntities[i]->Deactivate();
 						}
-						else
-						{
-							m_lives--;
-						}
-						m_shootableEntities[i]->Deactivate();
+					}
+				}
+				if (m_shootableEntities[i]->ShouldHaunt())
+				{
+					m_haunter->Haunt();
+					m_lives--;
+				}
+			}
+			m_elapsedTime += deltaTime;
+			if (m_elapsedTime > m_timeBetweenSpawns)
+			{
+				m_elapsedTime = 0;
+				ClearSpots();
+				int spot = GetUnusedSpot();
+				if (spot != -1)
+				{
+					Vector2f* pos = m_spawnSpots[spot];
+					int index = PickEntity();
+					if (index != -1)
+					{
+						*m_usedSpots[spot] = index;
+						m_shootableEntities[index]->Activate(*pos);
+						m_timeBetweenSpawns *= 0.98f;
 					}
 				}
 			}
-			//if (shootableEntities[i]->ShouldHaunt())
-			//{
-			//
-			//}
+			m_ghoulsCounter->setString("Ghouls killed : " + std::to_string(m_kills));
+			m_spiritCounter->setString("Spirit: " + std::to_string(m_lives));
 		}
-		m_elapsedTime += deltaTime;
-		if (m_elapsedTime > m_timeBetweenSpawns)
-		{
-			m_elapsedTime = 0;
-			ClearSpots();
-			int spot = GetUnusedSpot();
-			if (spot != -1)
-			{
-				Vector2f* pos = m_spawnSpots[spot];
-				int index = PickEntity();
-				if (index != -1)
-				{
-					*m_usedSpots[spot] = index;
-					m_shootableEntities[index]->Activate(*pos);
-				}
-			}
-		}
-		m_ghoulsCounter->setString("Ghouls killed : " + std::to_string(m_kills));
-		m_spiritCounter->setString("Spirit: " + std::to_string(m_lives));
+		m_haunter->Update(deltaTime);
 	};
 
 	virtual void Draw(RenderWindow* rw)override
@@ -165,14 +183,15 @@ public:
 			}
 		}
 		rw->draw(*m_foreground);
-		rw->draw(*m_crosshair);
+		//m_nightimeClock->Draw(rw);
+		m_haunter->Draw(rw);
 		rw->draw(*m_ghoulsCounter);
 		rw->draw(*m_spiritCounter);
 	}
 
 	virtual bool CheckState() override
 	{
-		if (m_lives <= 0)
+		if (m_lives <= 0 && !m_haunter->GetIsHaunting())
 		{
 			return true;
 		}
@@ -240,7 +259,12 @@ public:
 
 	int GetScore()
 	{
-		return m_kills - (m_lives * 2);
+		int score = m_kills - ((3 - m_lives) * 2);
+		if (score < 0)
+		{
+			score = 0;
+		}
+		return score;
 	}
 };
 

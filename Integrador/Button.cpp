@@ -20,6 +20,8 @@ public:
         m_text->setPosition(location.x + 16, location.y + 8);
         m_text->setCharacterSize(46);
         m_text->setFillColor(sf::Color::Black);
+        m_text->setOutlineColor(sf::Color(255, 255, 255, 150));
+        m_text->setOutlineThickness(1);
 
         m_sprite->setTexture(*normalTexture);
         m_sprite->setScale(targetSize->x / clickedTexture->getSize().x, targetSize->y / clickedTexture->getSize().y);

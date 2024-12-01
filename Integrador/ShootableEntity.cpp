@@ -60,6 +60,7 @@ public:
 		m_isActive = true;
 		m_sprite->setPosition(pos);
 		m_elapsedTime = 0;
+		m_duration *= 0.95;
 	}
 
 	void Deactivate()
